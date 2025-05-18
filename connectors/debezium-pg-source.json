@@ -1,0 +1,19 @@
+{
+    "name": "debezium-pg-source",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "docker-postgres-1",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname": "mydb",
+        "database.server.name": "pg-server",
+        "table.include.list": "public.crypto_prices",
+        "plugin.name": "pgoutput",
+        "slot.name": "debezium_slot",
+        "publication.name": "debezium_pub",
+        "database.history.kafka.bootstrap.servers": "kafka:9092",
+        "database.history.kafka.topic": "schema-changes.public",
+        "topic.prefix": "dbz_"
+    }
+}

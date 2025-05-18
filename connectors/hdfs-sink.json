@@ -1,0 +1,24 @@
+{
+  "name": "hdfs-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
+    "tasks.max": "1",
+    "topics": "dbz_public_crypto_prices",  
+    "hdfs.url": "hdfs://namenode:8020",
+    "hadoop.conf.dir": "/etc/hadoop/conf",
+    "hive.integration": "true",  
+    "hive.metastore.uris": "thrift://hive-metastore:9083",
+    "hive.database": "default",
+    "flush.size": "1",
+    "rotate.interval.ms": "31536000000",  
+    "path.format": "/data/lake/crypto_prices",  
+    "filename.format": "all_records",  
+    "format.class": "io.confluent.connect.hdfs.parquet.ParquetFormat",  
+    "partitioner.class": "io.confluent.connect.hdfs.partitioner.DefaultPartitioner",
+    "schema.compatibility": "NONE",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false"
+  }
+}

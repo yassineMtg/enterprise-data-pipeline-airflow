@@ -67,6 +67,27 @@ def create_hdfs_sink_connector():
     )
     response.raise_for_status()
 
+def create_hive_table():
+    from pyhive import hive
+    conn = hive.Connection(
+        host='hive-server',
+        port=10000,
+        username='hive',
+        database='default'
+    )
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE EXTERNAL TABLE IF NOT EXISTS crypto_prices (
+            id INT,
+            timestamp TIMESTAMP,
+            currency STRING,
+            price_usd DECIMAL(18,2)
+        STORED AS PARQUET
+        LOCATION '/data/lake/crypto_prices'
+    """)
+    cursor.close()
+    conn.close()
+
 with DAG(
     'data_pipeline',
     default_args=default_args,
@@ -90,9 +111,14 @@ with DAG(
         python_callable=create_hdfs_sink_connector,
     )
 
+    create_hive = PythonOperator(
+    task_id='create_hive_table',
+    python_callable=create_hive_table,
+)
+
     run_test_generator = BashOperator(
         task_id='run_test_generator',
         bash_command='python /app/scripts/test_generator.py --duration 300',
     )
 
-    start_services >> [create_debezium, create_hdfs] >> run_test_generator
+    start_services >> [create_debezium, create_hdfs, create_hive] >> run_test_generator

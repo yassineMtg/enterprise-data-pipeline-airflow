@@ -7,6 +7,7 @@ services:
     ports:
       - "8083:8083"
     environment:
+      KAFKA_OPTS: "-Dsun.net.inetaddr.ttl=0 -Dsun.net.inetaddr.negative.ttl=0"
       CONNECT_BOOTSTRAP_SERVERS: kafka:9092
       CONNECT_GROUP_ID: connect-cluster
       CONNECT_CONFIG_STORAGE_TOPIC: connect-configs
@@ -22,3 +23,10 @@ services:
       CONNECT_HEAP_OPTS: "-Xms512m -Xmx1024m"
     volumes:
       - ../hadoop/conf:/etc/hadoop/conf
+      - ./postgresql-42.6.0.jar:/opt/hive/lib/postgresql.jar
+      - ./postgresql-42.6.0.jar:/usr/share/java/kafka-connect-jdbc/postgresql.jar
+
+networks:
+  datapipeline-net:
+    name: datapipeline-net
+    driver: bridge

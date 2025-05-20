@@ -1,0 +1,24 @@
+[2025-05-19T22:20:56.415+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: data_pipeline.create_hdfs_sink_connector manual__2025-05-17T23:26:12+00:00 [queued]>
+[2025-05-19T22:20:56.429+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: data_pipeline.create_hdfs_sink_connector manual__2025-05-17T23:26:12+00:00 [queued]>
+[2025-05-19T22:20:56.430+0000] {taskinstance.py:1361} INFO - Starting attempt 2 of 2
+[2025-05-19T22:20:56.463+0000] {taskinstance.py:1382} INFO - Executing <Task(PythonOperator): create_hdfs_sink_connector> on 2025-05-17 23:26:12+00:00
+[2025-05-19T22:20:56.468+0000] {standard_task_runner.py:57} INFO - Started process 382 to run task
+[2025-05-19T22:20:56.479+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'data_pipeline', 'create_hdfs_sink_connector', 'manual__2025-05-17T23:26:12+00:00', '--job-id', '25', '--raw', '--subdir', 'DAGS_FOLDER/data_pipeline.py', '--cfg-path', '/tmp/tmpe_4d7iau']
+[2025-05-19T22:20:56.484+0000] {standard_task_runner.py:85} INFO - Job 25: Subtask create_hdfs_sink_connector
+[2025-05-19T22:20:56.563+0000] {task_command.py:416} INFO - Running <TaskInstance: data_pipeline.create_hdfs_sink_connector manual__2025-05-17T23:26:12+00:00 [running]> on host 2dc8e8f16429
+[2025-05-19T22:20:56.674+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='data_pipeline' AIRFLOW_CTX_TASK_ID='create_hdfs_sink_connector' AIRFLOW_CTX_EXECUTION_DATE='2025-05-17T23:26:12+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-17T23:26:12+00:00'
+[2025-05-19T22:20:56.730+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/python.py", line 192, in execute
+    return_value = self.execute_callable()
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/python.py", line 209, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+  File "/opt/airflow/dags/data_pipeline.py", line 68, in create_hdfs_sink_connector
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.8/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: http://connect:8083/connectors
+[2025-05-19T22:20:56.749+0000] {taskinstance.py:1400} INFO - Marking task as FAILED. dag_id=data_pipeline, task_id=create_hdfs_sink_connector, execution_date=20250517T232612, start_date=20250519T222056, end_date=20250519T222056
+[2025-05-19T22:20:56.779+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 25 for task create_hdfs_sink_connector (409 Client Error: Conflict for url: http://connect:8083/connectors; 382)
+[2025-05-19T22:20:56.811+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2025-05-19T22:20:56.855+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

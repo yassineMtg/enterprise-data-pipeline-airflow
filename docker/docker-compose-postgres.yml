@@ -23,3 +23,8 @@ services:
 
 volumes:
   postgres-data:
+
+networks:
+  datapipeline-net:
+    name: datapipeline-net
+    driver: bridge

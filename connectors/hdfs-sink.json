@@ -3,22 +3,21 @@
   "config": {
     "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
     "tasks.max": "1",
-    "topics": "dbz_public_crypto_prices",  
-    "hdfs.url": "hdfs://namenode:8020",
+    "topics": "dbz_.public.crypto_prices",
+    "hdfs.url": "hdfs://docker-namenode-1:8020/data/lake",
     "hadoop.conf.dir": "/etc/hadoop/conf",
-    "hive.integration": "true",  
-    "hive.metastore.uris": "thrift://hive-metastore:9083",
-    "hive.database": "default",
-    "flush.size": "1",
-    "rotate.interval.ms": "31536000000",  
-    "path.format": "/data/lake/crypto_prices",  
-    "filename.format": "all_records",  
-    "format.class": "io.confluent.connect.hdfs.parquet.ParquetFormat",  
-    "partitioner.class": "io.confluent.connect.hdfs.partitioner.DefaultPartitioner",
+    "flush.size": "1",                 
+    "path.format": "crypto_prices.json",
+    "filename.offset.zero.pad.width": "10",
+    "timestamp.extractor": "Record",
+    "format.class": "io.confluent.connect.hdfs.json.JsonFormat",
+    "storage.class": "io.confluent.connect.hdfs.storage.HdfsStorage",
     "schema.compatibility": "NONE",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "false",
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "false"
+    "key.converter.schemas.enable": "false",
+    "append.enabled": "true",
+    "logs.dir": "/data/lake/logs"
   }
 }

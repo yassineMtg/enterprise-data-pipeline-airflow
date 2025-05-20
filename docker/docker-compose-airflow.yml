@@ -52,3 +52,8 @@ services:
 
 volumes:
   postgres-airflow-data:
+
+networks:
+  datapipeline-net:
+    name: datapipeline-net
+    driver: bridge

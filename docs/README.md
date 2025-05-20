@@ -1,15 +1,15 @@
 # Real-time CDC Pipeline with PostgreSQL, Kafka, and HDFS
 
 ## Overview
-This pipeline captures changes from PostgreSQL using Debezium, streams them through Kafka, and stores them in HDFS.
-
-## Components
+This pipeline captures changes from PostgreSQL using Debezium, streams them through Kafka, and stores them in HDFS.        
+  
+## Components     
 1. **PostgreSQL** - Source database with logical decoding enabled
-2. **Kafka** - Message broker for change events
+2. **Kafka** - Message broker for change events          
 3. **Kafka Connect** - With Debezium source and HDFS sink connectors
-4. **Hadoop HDFS** - Distributed file system for storage
+4. **Hadoop HDFS** - Distributed file system for storage   
 5. **Airflow** - Orchestration of the pipeline
-
+ 
 ## Setup
 ### 1. Setup and Infrastructure
 ```bash
@@ -57,7 +57,7 @@ curl http://localhost:8083/connectors
 curl http://localhost:8083/connectors/debezium-pg-source/status
 curl http://localhost:8083/connectors/hdfs-sink/status
 
-# Check Kafka topics
+# Check Kafka topics 
 docker exec -it docker-kafka-1 kafka-topics --list --bootstrap-server kafka:9092
 
 docker exec -it docker-kafka-1 kafka-console-consumer --bootstrap-server kafka:9092 --topic dbz_.public.crypto_prices --from-beginning --max-messages 5
@@ -94,69 +94,3 @@ docker exec -it docker-kafka-1 kafka-console-consumer --bootstrap-server kafka:9
 # 3. HDFS file growth
 docker exec -it docker-namenode-1 hdfs dfs -ls /data/lake
 ```
-### Detailed Testing
-```bash
-
-## 1. Verify Single Output File
-docker exec -it docker-namenode-1 hdfs dfs -ls /data/lake
-
-
-## 2. Validate Separate Containers
-docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
-
-
-## 3. Test Generator Verification
-docker exec -it docker-connect-1 python /app/scripts/test_generator.py --duration 60
-
-docker exec -it docker-postgres-1 psql -U postgres -d mydb -c "SELECT COUNT(*) FROM crypto_prices;"
-
-docker exec -it docker-kafka-1 kafka-console-consumer --bootstrap-server kafka:9092 --topic dbz_public_crypto_prices --from-beginning --max-messages 5
-
-## 4. Airflow DAG Testing
-#Access Airflow UI at http://localhost:8080 (login: admin/admin)
-#Unpause the data_pipeline DAG
-#Trigger manual execution
-#Monitor DAG runs in the UI
-
--------------------------------------
-# Stop and remove all containers with volumes
-docker-compose -f docker/docker-compose-postgres.yml down -v --remove-orphans
-docker-compose -f docker/docker-compose-kafka.yml down -v --remove-orphans
-docker-compose -f docker/docker-compose-hadoop.yml down -v --remove-orphans
-docker-compose -f docker/docker-compose-connect.yml down -v --remove-orphans
-docker-compose -f docker/docker-compose-airflow.yml down -v --remove-orphans
-# Remove orphaned containers
-docker system prune -a --volumes
-
-
-# Enter the container
-docker exec -it docker-connect-1 bash
-
-# Install psycopg2-binary (a pre-compiled version that's easier to install)
-pip install psycopg2-binary requests
-
-# Exit the container
-exit
-
-curl -X DELETE http://localhost:8083/connectors/hdfs-sink
-
-# End-to-End Verification
-
-#1. INSERT
-# PostgreSQL
-docker exec -it pipeline-postgres-1 psql -U postgres -d mydb -c "INSERT INTO crypto_prices (currency, price_usd) VALUES ('TestCoin', 100.00);"
-
-# HDFS
-docker exec -it pipeline-namenode-1 hdfs dfs -tail /data/lake/dbz_public_crypto_prices/latest/part-00000
-
-#2. UPDATE
-# PostgreSQL
-docker exec -it pipeline-postgres-1 psql -U postgres -d mydb -c "UPDATE crypto_prices SET price_usd = 200.00 WHERE currency = 'TestCoin';"
-
-# Check HDFS for update record
-
-#3. DELETE
-# PostgreSQL
-docker exec -it pipeline-postgres-1 psql -U postgres -d mydb -c "DELETE FROM crypto_prices WHERE currency = 'TestCoin';"
-
-# Check HDFS for tombstone record
